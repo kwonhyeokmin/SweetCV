@@ -1,4 +1,8 @@
+import jdk.nashorn.internal.runtime.regexp.joni.exception.ValueException;
+
 import javax.imageio.ImageIO;
+import javax.swing.*;
+import java.awt.*;
 import java.awt.image.BufferedImage;
 import java.io.File;
 import java.io.IOException;
@@ -128,11 +132,54 @@ public class CV implements Contour, Vizualize{
     }
 
     /**
-     * Draw image window.
-     * @param image Image for drawing.
+     * Draw image in window.
+     * @param image 3-dimension array type image for drawing.
      */
     @Override
     public void drawImage(int[][][] image) {
+        int chanel = image.length;
+        int height = image[0].length;
+        int width = image[0][0].length;
+        int[][] red;
+        int[][] green;
+        int[][] blue;
 
+        if (chanel==1) {
+            red = image[0];
+            green = image[0];
+            blue = image[0];
+        }
+        else if (chanel==3){
+            red = image[0];
+            green = image[1];
+            blue = image[2];
+        }
+        else {
+            throw new ValueException("Image chanel value is not valid");
+        }
+
+        BufferedImage bufferedImage = new BufferedImage(width, height, BufferedImage.TYPE_INT_RGB);
+        Graphics2D g = (Graphics2D)bufferedImage.getGraphics();
+        for (int i = 0; i < width; i++) {
+            for (int j = 0; j < height; j++) {
+                g.setColor(new Color(red[i][j], green[i][j], blue[i][j]));
+                g.fillRect(i, j, 1, 1);
+            }
+        }
+
+        JFrame frame = new JFrame("Image test");
+        frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+        JPanel panel = new JPanel(){
+            @Override
+            protected void paintComponent(Graphics g) {
+                Graphics2D g2d = (Graphics2D)g;
+                g2d.clearRect(0, 0, getWidth(), getHeight());
+                g2d.drawImage(bufferedImage, 0, 0, this);
+            }
+        };
+        panel.setPreferredSize(new Dimension(width, height));
+        frame.getContentPane().add(panel);
+        frame.pack();
+        frame.setVisible(true);
     }
 }
