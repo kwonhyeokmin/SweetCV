@@ -1,5 +1,3 @@
-
-
 public class CV implements Contour, Vizualize{
     /**
      * Find contour points using Sobel Algorithm.
@@ -28,7 +26,7 @@ public class CV implements Contour, Vizualize{
      * @param image Image for drawing.
      */
     @Override
-    public void drawImage(float[][] image) {
+    public void drawImage(int[][][] image) {
 
     }
 }

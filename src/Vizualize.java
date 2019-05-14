@@ -1,4 +1,3 @@
 public interface Vizualize {
-    public void drawImage(float[][] image);
-
+    void drawImage(int[][][] image);
 }
