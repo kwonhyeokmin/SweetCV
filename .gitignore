@@ -25,3 +25,6 @@ hs_err_pid*
 # picture file for testing
 *.jpg
 #.png
+
+# Test.java file
+Test.java
