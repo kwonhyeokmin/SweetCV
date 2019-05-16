@@ -69,9 +69,9 @@ public class CV implements Contour, Vizualize{
                         for (int j = 0; j < width; j++) {
                             int pixel = image.getRGB(j, i);
                             color = pixel2RGB(pixel);
-                            red[j][i] = color[0];
-                            green[j][i] = color[1];
-                            blue[j][i] = color[2];
+                            red[i][j] = color[0];
+                            green[i][j] = color[1];
+                            blue[i][j] = color[2];
                         }
                     }
                     return new int[][][]{red, green, blue};
@@ -81,7 +81,7 @@ public class CV implements Contour, Vizualize{
                         for (int j = 0; j < width; j++) {
                             int pixel = image.getRGB(j, i);
                             color = pixel2GRAY(pixel);
-                            gray[j][i] = color[0];
+                            gray[i][j] = color[0];
                         }
                     }
                     return new int[][][]{gray};
@@ -91,10 +91,10 @@ public class CV implements Contour, Vizualize{
                         for (int j = 0; j < width; j++) {
                             int pixel = image.getRGB(j, i);
                             color = pixel2ARGB(pixel);
-                            alpha[j][i] = color[0];
-                            red[j][i] = color[1];
-                            green[j][i] = color[2];
-                            blue[j][i] = color[3];
+                            alpha[i][j] = color[0];
+                            red[i][j] = color[1];
+                            green[i][j] = color[2];
+                            blue[i][j] = color[3];
                         }
                     }
                     return new int[][][]{alpha, red, green, blue};
@@ -108,14 +108,45 @@ public class CV implements Contour, Vizualize{
         }
         return null;
     }
+    private int[][] maskMul(int[][] image, int[][] mask) {
+        for (int i = 0; i < image.length-mask.length+1; i++) {
+            for (int j = 0; j < image[0].length-mask[0].length+1; j++) {
+                int value = 0;
+                for (int k = 0; k < mask.length; k++) {
+                    for (int l = 0; l < mask[0].length; l++) {
+                        value += image[i+k][j+l]*mask[k][l];
+                    }
+                }
+                value  = (value < 0) ? 0 : value;
+                value  = (value > 255) ? 255 : value;
+                image[i][j] = (value < 0) ? 0 : value;
+            }
+        }
+        return image;
+    }
+    public int[][] sobel(int[][] image) {
+        int height = image.length;
+        int width = image[0].length;
+        int[][] maskY = {
+                {-1, -2, -1},
+                {0, 0, 0},
+                {1, 2, 1}};
+        int[][] maskX = {
+                {-1, 0, 1},
+                {-2, 0, 2},
+                {-1, 0, 1}
+        };
+        image = maskMul(image, maskY);
+        return image;
+    }
 
     /**
-     * Find contour points using Sobel Algorithm.
+     * Find contour points using Canny Algorithm.
      * @param image Image for find contour.
      * @return Contour points type of 2-dimension integer type array.
      */
     @Override
-    public int[][] findContours(float[][] image) {
+    public int[][] findContours(int[][] image) {
 
         return new int[0][];
     }
@@ -160,10 +191,10 @@ public class CV implements Contour, Vizualize{
 
         BufferedImage bufferedImage = new BufferedImage(width, height, BufferedImage.TYPE_INT_RGB);
         Graphics2D g = (Graphics2D)bufferedImage.getGraphics();
-        for (int i = 0; i < width; i++) {
-            for (int j = 0; j < height; j++) {
+        for (int i = 0; i < height; i++) {
+            for (int j = 0; j < width; j++) {
                 g.setColor(new Color(red[i][j], green[i][j], blue[i][j]));
-                g.fillRect(i, j, 1, 1);
+                g.fillRect(j, i, 1, 1);
             }
         }
 

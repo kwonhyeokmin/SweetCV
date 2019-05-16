@@ -1,4 +1,4 @@
 public interface Contour {
-    int[][] findContours(float[][] image);
+    int[][] findContours(int[][] image);
     int[][] approxPolyDP(int[][] curve, float epsilon);
 }
