@@ -180,6 +180,7 @@ public class CV implements Contour, Vizualize{
         panel.setPreferredSize(new Dimension(width, height));
         frame.getContentPane().add(panel);
         frame.pack();
+        frame.setLocationRelativeTo(null);
         frame.setVisible(true);
     }
 }
